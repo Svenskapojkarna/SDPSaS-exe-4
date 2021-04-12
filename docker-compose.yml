@@ -9,9 +9,9 @@ services:
         links:
             - database
         networks:
-            - default
+            - foonetwork
     database:
-        image: mysql
+        image: mysql:5.7.13
         ports: 
             - "3306:3306"
         environment:
@@ -23,16 +23,23 @@ services:
             - ./dump:/docker-entrypoint-initdb.d
             - persistent:/var/lib/mysql
         networks:
-            - default
+            - foonetwork
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
-        links: 
-            - database:database
         ports:
             - 8000:80
         environment:
+            PMA_HOST: database
             MYSQL_USER: admin
             MYSQL_PASSWORD: admin
             MYSQL_ROOT_PASSWORD: admin
+        networks: 
+            - foonetwork
+        depends_on:
+            - database
+
 volumes:
     persistent:
+
+networks:
+    foonetwork:
